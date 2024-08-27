@@ -1,6 +1,6 @@
 import blockImg from "../assets/block_img.svg";
 import UserImg from "../assets/iconoir_profile-circle.svg";
-// import { Link } from "react-router-dom";
+
 
 const Navbar = () => {
   return (
