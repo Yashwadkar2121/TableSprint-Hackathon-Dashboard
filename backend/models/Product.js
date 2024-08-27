@@ -12,10 +12,10 @@ Product.create = (productName, subCategoryId, status, callback) => {
 // Find all Products
 Product.findAll = (callback) => {
   const query = `
-    SELECT p.id, p.productName, sc.subCategoryName, c.categoryName, p.status 
+    SELECT p.id, p.productName, sc.subCategoryName, c.name AS categoryName, p.status 
     FROM Products p
-    JOIN SubCategories sc ON p.subCategoryId = sc.id
-    JOIN Categories c ON sc.categoryId = c.id
+    JOIN sub_categories sc ON p.subCategoryId = sc.id
+    JOIN categories c ON sc.categoryId = c.id
   `;
   db.query(query, callback);
 };
@@ -23,10 +23,10 @@ Product.findAll = (callback) => {
 // Find a Product by ID
 Product.findById = (id, callback) => {
   const query = `
-    SELECT p.id, p.productName, sc.subCategoryName, c.categoryName, p.status 
+    SELECT p.id, p.productName, sc.subCategoryName, c.name AS categoryName, p.status 
     FROM Products p
-    JOIN SubCategories sc ON p.subCategoryId = sc.id
-    JOIN Categories c ON sc.categoryId = c.id
+    JOIN sub_categories sc ON p.subCategoryId = sc.id
+    JOIN categories c ON sc.categoryId = c.id
     WHERE p.id = ?
   `;
   db.query(query, [id], callback);
