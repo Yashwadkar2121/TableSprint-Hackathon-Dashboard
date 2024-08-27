@@ -12,8 +12,10 @@ function Home() {
           {" "}
           <Sidebar />
         </div>
-        <div className="w-9/12 flex justify-center items-center m-2 border-2 h-[88vh] rounded-2xl">
-          {/* <DashBorad /> */}
+        {/* <div className="w-9/12 flex justify-center items-center m-2 border-2 h-[88vh] rounded-2xl">
+          <DashBorad />
+        </div> */}
+        <div className="w-9/12 m-2 p-5 border-2 h-[88vh] rounded-2xl">
           <AddCategory />
         </div>
       </div>
