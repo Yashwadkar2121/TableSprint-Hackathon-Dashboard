@@ -7,6 +7,7 @@ const AddCategory = () => {
     sequence: "",
   });
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -19,7 +20,9 @@ const AddCategory = () => {
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file)); // Preview the image
   };
 
   const handleSubmit = async (e) => {
@@ -27,7 +30,7 @@ const AddCategory = () => {
     const data = new FormData();
     data.append("name", formData.name);
     data.append("sequence", formData.sequence);
-    if (image) data.append("image", image);
+    data.append("image", image);
 
     try {
       const response = await axios.post(
@@ -35,83 +38,95 @@ const AddCategory = () => {
         data
       );
       setSuccess(response.data.message);
-      setError(""); // Clear any previous errors
-
-      // Optionally, clear the form fields
-      setFormData({
-        name: "",
-        sequence: "",
-      });
+      setError("");
+      // Reset form
+      setFormData({ name: "", sequence: "" });
       setImage(null);
-    } catch (error) {
+      setImagePreview(null);
+    } catch (err) {
       setError(
-        error.response?.data?.error || "An error occurred. Please try again."
+        err.response?.data?.error || "An error occurred. Please try again."
       );
-      setSuccess(""); // Clear any previous success message
+      setSuccess("");
     }
   };
 
   return (
-    <div>
-      <div className="flex gap-5">
-        <button>--</button>
-        <h2 className="font-semibold">Add Category</h2>
-      </div>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">Add Category</h2>
+
+      {error && <p className="text-red-500">{error}</p>}
+      {success && <p className="text-green-500">{success}</p>}
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="flex justify-between my-10">
-          <label>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 font-semibold mb-2"
+            htmlFor="name"
+          >
             Category Name
-            <br />
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="border-2 border-black rounded-full"
-            />
           </label>
-          <label>
-            Category Sequence
-            <br />
-            <input
-              type="text"
-              name="sequence"
-              value={formData.sequence}
-              onChange={handleChange}
-              required
-              className="border-2 border-black rounded-full"
-            />
-          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded-md"
+          />
         </div>
 
-        <label>
-          Category Image
-          <br />
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 font-semibold mb-2"
+            htmlFor="sequence"
+          >
+            Category Sequence
+          </label>
+          <input
+            type="text"
+            id="sequence"
+            name="sequence"
+            value={formData.sequence}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 font-semibold mb-2"
+            htmlFor="image"
+          >
+            Category Image
+          </label>
           <input
             type="file"
+            id="image"
             name="image"
             onChange={handleImageChange}
             required
+            className="w-full border rounded-md"
           />
-        </label>
-        <div className="absolute bottom-5 right-5">
-          <button
-            type="button"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-10"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full m-10"
-          >
-            Save
-          </button>
+          {imagePreview && (
+            <div className="mt-2">
+              <img
+                src={imagePreview}
+                alt="Image Preview"
+                className="max-w-xs rounded-md"
+              />
+            </div>
+          )}
         </div>
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
+
+        <button
+          type="submit"
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+        >
+          Save
+        </button>
       </form>
     </div>
   );

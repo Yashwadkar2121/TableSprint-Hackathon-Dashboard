@@ -8,9 +8,6 @@ const categoryRoutes = require("./routes/category");
 const subCategoryRoutes = require("./routes/subCategory");
 const productRoutes = require("./routes/product");
 
-// Middleware to parse JSON bodies
-app.use(express.json());
-
 // Use CORS middleware
 app.use(
   cors({
@@ -19,7 +16,9 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   })
 );
-
+// Middleware to parse JSON bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
