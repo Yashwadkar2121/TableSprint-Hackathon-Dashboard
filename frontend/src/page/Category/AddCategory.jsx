@@ -7,6 +7,8 @@ const AddCategory = () => {
     sequence: "",
   });
   const [image, setImage] = useState(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,26 +22,33 @@ const AddCategory = () => {
     setImage(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("name", formData.name);
     data.append("sequence", formData.sequence);
-    data.append("image", image);
+    if (image) data.append("image", image);
 
-    axios
-      .post("http://localhost:5000/category/create", data)
-      .then((response) => {
-        console.log(response.data.message);
-        setFormData({
-          name: "",
-          sequence: "",
-        });
-        setImage(null);
-      })
-      .catch((error) => {
-        console.error("Error creating category:", error);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/category/create",
+        data
+      );
+      setSuccess(response.data.message);
+      setError(""); // Clear any previous errors
+
+      // Optionally, clear the form fields
+      setFormData({
+        name: "",
+        sequence: "",
       });
+      setImage(null);
+    } catch (error) {
+      setError(
+        error.response?.data?.error || "An error occurred. Please try again."
+      );
+      setSuccess(""); // Clear any previous success message
+    }
   };
 
   return (
@@ -101,6 +110,8 @@ const AddCategory = () => {
             Save
           </button>
         </div>
+        {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>}
       </form>
     </div>
   );
