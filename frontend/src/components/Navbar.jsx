@@ -1,6 +1,6 @@
+import { Link } from "react-router-dom";
 import blockImg from "../assets/block_img.svg";
 import UserImg from "../assets/iconoir_profile-circle.svg";
-
 
 const Navbar = () => {
   return (
@@ -11,9 +11,9 @@ const Navbar = () => {
           <h1 className="text-2xl font-bold">TableSprint</h1>
         </div>
         <div className="text-2xl">
-          <a href="#">
+          <Link to="/login">
             <img src={UserImg} alt="User" />
-          </a>
+          </Link>
         </div>
       </nav>
     </header>

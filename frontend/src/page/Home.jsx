@@ -11,18 +11,20 @@ import EditSubCategory from "./Sub-Category/EditSubCategory";
 import Product from "./Products/Products";
 import AddProduct from "./Products/AddProducts";
 import EditProduct from "./Products/EditProducts";
+import Login from "../components/Login";
+import Register from "../components/Register";
 
 function Home() {
   return (
     <BrowserRouter>
       {" "}
       <Navbar />
-      <div className="flex h-[90vh]">
+      <div className="flex h-screen">
         <div className="w-3/12">
           {" "}
           <Sidebar />{" "}
         </div>
-        <div className="w-9/12">
+        <div className="w-9/12 m-3">
           <Routes>
             <Route path="/" element={<DashBorad />} />
             <Route path="/category" element={<Category />} />
@@ -34,6 +36,8 @@ function Home() {
             <Route path="/products" element={<Product />} />
             <Route path="/addproduct" element={<AddProduct />} />
             <Route path="/editproduct" element={<EditProduct />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </div>
       </div>
