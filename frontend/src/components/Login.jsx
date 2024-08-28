@@ -1,26 +1,27 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await axios.post("http://localhost:5000/user/login", {
         email,
         password,
       });
 
       const { token } = response.data;
-      // Store the token in localStorage or a state management solution
       localStorage.setItem("authToken", token);
 
-      // Redirect or show a success message
-      console.log("Login successful!");
+      setError(""); // Clear any previous errors
+      navigate("/"); // Redirect to the dashboard or another page
     } catch (error) {
       setError(
         error.response?.data?.error || "An error occurred. Please try again."
