@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import DashBorad from "./DashBorad";
+import Dashboard from "./Dashboard";
 import Category from "./Category/Category";
 import AddCategory from "./Category/AddCategory";
 import EditCategory from "./Category/Category";
@@ -20,13 +20,13 @@ function Home() {
       {" "}
       <Navbar />
       <div className="flex h-screen">
-        <div className="w-3/12">
+        <div className="hidden md:block w-3/12">
           {" "}
           <Sidebar />{" "}
         </div>
         <div className="w-9/12 m-3">
           <Routes>
-            <Route path="/" element={<DashBorad />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/category" element={<Category />} />
             <Route path="/addcategory" element={<AddCategory />} />
             <Route path="/editcategory" element={<EditCategory />} />
