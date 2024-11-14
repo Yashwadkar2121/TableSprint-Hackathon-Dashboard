@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import blockImg from "../assets/block_img.svg";
-import UserImg from "../assets/user_logo.svg";
+// import UserImg from "../assets/user_logo.svg";
 import Sidebar from "./Sidebar";
 
 const Navbar = () => {
@@ -33,14 +33,16 @@ const Navbar = () => {
             TableSprint
           </h1>
         </div>
-        <div className="text-2xl flex justify-between items-center">
-          <Link to="/login">
+        <div className="text-2xl flex justify-between items-center gap-1 md:gap-2">
+          {/* <Link to="/">
             <img
               src={UserImg}
               alt="User"
               className="h-8 w-8 md:h-auto md:w-auto"
             />
-          </Link>
+          </Link> */}
+          <Link to="/login">Login</Link>
+          <Link to="/register">SignUp</Link>
         </div>
       </nav>
 

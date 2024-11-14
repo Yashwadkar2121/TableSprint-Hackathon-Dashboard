@@ -17,7 +17,7 @@ import Register from "../components/Register";
 function Home() {
   return (
     <BrowserRouter>
-      <div className="sticky top-0 left-0">
+      <div className="sticky top-0 left-0 z-10">
         {" "}
         <Navbar />
       </div>

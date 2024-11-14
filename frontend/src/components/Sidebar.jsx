@@ -6,7 +6,7 @@ function Sidebar(props) {
   const { toggleSidebar } = props;
 
   return (
-    <div className="bg-[#F4F4F4] h-screen flex items-center justify-center md:justify-start md:items-start">
+    <div className="bg-[#F4F4F4] h-screen flex items-center justify-center md:justify-start md:items-start relative z-1">
       <ul className="space-y-4 md:space-y-0 w-full">
         <li
           className={location.pathname === "/" ? "md:bg-[#F4EDAF]" : ""}
