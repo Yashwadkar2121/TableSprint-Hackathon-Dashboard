@@ -120,6 +120,7 @@ function Products() {
           Add Products
         </button>
       </div>
+      
       <div className="bg-white rounded-lg shadow-lg overflow-hidden mt-2 md:mt-3">
         {products.length > 0 ? (
           <table {...getTableProps()} className="w-full">
