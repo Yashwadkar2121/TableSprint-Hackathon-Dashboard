@@ -105,7 +105,7 @@ function SubCategory() {
       <div className="flex flex-col md:flex-row justify-between items-center p-2 gap-3 md:gap-8">
         <div className="flex items-center gap-2">
           <img
-            src="/Sidebar/Group.svg"
+            src="/Sidebar/list 1.svg"
             alt="homeLogo"
             className="h-6 w-6 md:h-8 md:w-8"
           />

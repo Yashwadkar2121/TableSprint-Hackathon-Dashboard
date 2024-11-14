@@ -95,7 +95,7 @@ function Products() {
       <div className="flex flex-col md:flex-row justify-between items-center p-2 gap-3 md:gap-8">
         <div className="flex items-center gap-2">
           <img
-            src="/Sidebar/Group.svg"
+            src="/Sidebar/Group 2609141.svg"
             alt="homeLogo"
             className="h-6 w-6 md:h-8 md:w-8"
           />
@@ -120,7 +120,6 @@ function Products() {
           Add Products
         </button>
       </div>
-      
       <div className="bg-white rounded-lg shadow-lg overflow-hidden mt-2 md:mt-3">
         {products.length > 0 ? (
           <table {...getTableProps()} className="w-full">
