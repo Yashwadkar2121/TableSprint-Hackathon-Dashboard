@@ -45,7 +45,7 @@ const Navbar = () => {
       </nav>
 
       {/* Sidebar component */}
-      {isSidebarVisible && <Sidebar />}
+      {isSidebarVisible && <Sidebar toggleSidebar={toggleSidebar} />}
     </header>
   );
 };

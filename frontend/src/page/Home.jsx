@@ -17,14 +17,16 @@ import Register from "../components/Register";
 function Home() {
   return (
     <BrowserRouter>
-      {" "}
-      <Navbar />
+      <div className="sticky top-0 left-0">
+        {" "}
+        <Navbar />
+      </div>
       <div className="flex h-screen">
         <div className="hidden md:block md:w-4/12 lg:w-3/12">
           {" "}
           <Sidebar />{" "}
         </div>
-        <div className="md:w-8/12 lg:w-9/12 m-3">
+        <div className="w-full md:w-8/12 lg:w-9/12 m-3">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/category" element={<Category />} />
