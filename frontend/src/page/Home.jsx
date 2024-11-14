@@ -20,11 +20,11 @@ function Home() {
       {" "}
       <Navbar />
       <div className="flex h-screen">
-        <div className="hidden md:block w-3/12">
+        <div className="hidden md:block md:w-4/12 lg:w-3/12">
           {" "}
           <Sidebar />{" "}
         </div>
-        <div className="w-9/12 m-3">
+        <div className="md:w-8/12 lg:w-9/12 m-3">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/category" element={<Category />} />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import blockImg from "../assets/block_img.svg";
-import UserImg from "../assets/iconoir_profile-circle.svg";
+import UserImg from "../assets/user_logo.svg";
 import Sidebar from "./Sidebar";
 
 const Navbar = () => {
