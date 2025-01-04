@@ -1,12 +1,12 @@
-const db = require("../db");
-
-exports.create = (name, image, sequence, callback) => {
-  const query =
-    "INSERT INTO categories (name, image, sequence) VALUES (?, ?, ?)";
-  db.query(query, [name, image, sequence], callback);
-};
-
-exports.getAll = (callback) => {
-  const query = "SELECT * FROM categories";
-  db.query(query, callback);
+module.exports = (sequelize, DataTypes) => {
+  const Category = sequelize.define("Category", {
+    category_name: { type: DataTypes.STRING, allowNull: false },
+    image: { type: DataTypes.STRING },
+    status: {
+      type: DataTypes.ENUM("active", "inactive"),
+      defaultValue: "active",
+    },
+    sequence: { type: DataTypes.INTEGER },
+  });
+  return Category;
 };
