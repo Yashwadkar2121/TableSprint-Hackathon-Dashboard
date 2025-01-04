@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTable } from "react-table";
+import { Link } from "react-router-dom";
 
 function Category() {
   const [categories, setCategories] = useState([]);
@@ -122,11 +123,11 @@ function Category() {
             />
           </div>
           <button className="border-2 rounded-xl bg-[#683294] text-white px-1 py-1 text-xs md:hidden whitespace-nowrap">
-            Add Categories
+            <Link to="/add_category">Add Categories</Link>
           </button>
         </div>
         <button className="hidden md:block border-2 rounded-xl bg-[#683294] text-white px-2 py-1 lg:px-2 lg:py-2 whitespace-nowrap ">
-          Add Categories
+          <Link to="/add_category">Add Categories</Link>
         </button>
       </div>
 
