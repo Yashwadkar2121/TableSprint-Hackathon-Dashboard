@@ -11,8 +11,8 @@ import EditSubCategory from "./Sub-Category/EditSubCategory";
 import Product from "./Products/Products";
 import AddProduct from "./Products/AddProducts";
 import EditProduct from "./Products/EditProducts";
-import Login from "../components/Login";
-import Register from "../components/Register";
+import Login from "../page/Auth/Login";
+import Register from "../page/Auth/Register";
 
 function AppContent() {
   const location = useLocation();
