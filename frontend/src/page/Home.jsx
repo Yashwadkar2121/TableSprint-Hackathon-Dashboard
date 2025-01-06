@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Dashboard from "./Dashboard";
@@ -18,6 +24,14 @@ function AppContent() {
   const location = useLocation();
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
+
+  // Check if the user is authenticated by looking for the auth token in localStorage
+  const isAuthenticated = !!localStorage.getItem("authToken");
+
+  // If the user is not authenticated and trying to access a protected route, redirect to login
+  if (!isAuthenticated && !isAuthRoute) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div>

@@ -1,25 +1,31 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import blockImg from "../assets/block_img.svg";
-// import UserImg from "../assets/user_logo.svg";
 import Sidebar from "./Sidebar";
 
 const Navbar = () => {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
 
+  const logout = () => {
+    localStorage.removeItem("authToken"); // Remove the authentication token
+    navigate("/login"); // Redirect to login page
+  };
+
+  // Check if the user is authenticated based on the presence of the token in localStorage
+  const isAuthenticated = !!localStorage.getItem("authToken"); // True if token exists
+
   return (
     <header className="bg-[#662671] text-white ">
       <nav className="flex justify-between items-center md:px-10 p-3 md:p-5">
         <div className="flex gap-2 md:gap-5 items-center">
-          {/* Icon that toggles sidebar visibility */}
           <div className="md:hidden">
-            {" "}
             <i
-              className="fa-solid fa-bars text-2xl cursor-pointer "
+              className="fa-solid fa-bars text-2xl cursor-pointer"
               onClick={toggleSidebar}
             ></i>
           </div>
@@ -34,19 +40,17 @@ const Navbar = () => {
           </h1>
         </div>
         <div className="text-2xl flex justify-between items-center gap-1 md:gap-2">
-          {/* <Link to="/">
-            <img
-              src={UserImg}
-              alt="User"
-              className="h-8 w-8 md:h-auto md:w-auto"
-            />
-          </Link> */}
-          <Link to="/login">Login</Link>
-          <Link to="/register">SignUp</Link>
+          {isAuthenticated ? (
+            <button onClick={logout}>Logout</button>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/register">SignUp</Link>
+            </>
+          )}
         </div>
       </nav>
 
-      {/* Sidebar component */}
       {isSidebarVisible && <Sidebar toggleSidebar={toggleSidebar} />}
     </header>
   );
