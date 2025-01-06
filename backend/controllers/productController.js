@@ -1,32 +1,29 @@
-const { Product, Category, Subcategory } = require("../models");
+const { Product, Subcategory } = require("../models");
 
 // Create a Product
 exports.createProduct = async (req, res) => {
   try {
-    const { product_name, category_id, subcategory_id, status, image } =
-      req.body;
+    const { subcategory_id, product_name, status, image } = req.body;
 
-    // Check if Category and Subcategory exist
-    const category = await Category.findByPk(category_id);
+    // Check if Subcategory exists
     const subcategory = await Subcategory.findByPk(subcategory_id);
-
-    if (!category || !subcategory) {
-      return res
-        .status(404)
-        .json({ message: "Category or Subcategory not found" });
+    if (!subcategory) {
+      return res.status(404).json({ message: "Subcategory not found" });
     }
 
+    // Create Product
     const product = await Product.create({
-      product_name,
-      category_id,
       subcategory_id,
+      product_name,
       status,
       image,
     });
 
-    res.status(201).json({ message: "Product created", product });
+    res.status(201).json({ message: "Product created successfully", product });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error creating product", error: error.message });
   }
 };
 
@@ -35,14 +32,17 @@ exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
       include: [
-        { model: Category, attributes: ["category_name"] },
-        { model: Subcategory, attributes: ["subcategory_name"] },
+        { model: Subcategory, attributes: ["subcategory_name", "category_id"] },
       ],
     });
 
-    res.status(200).json(products);
+    res
+      .status(200)
+      .json({ message: "Products fetched successfully", products });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching products", error: error.message });
   }
 };
 
@@ -50,23 +50,19 @@ exports.getAllProducts = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { product_name, category_id, subcategory_id, status, image } =
-      req.body;
+    const { product_name, subcategory_id, status, image } = req.body;
 
     const product = await Product.findByPk(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
-    await product.update({
-      product_name,
-      category_id,
-      subcategory_id,
-      status,
-      image,
-    });
-
-    res.status(200).json({ message: "Product updated", product });
+    await product.update({ product_name, subcategory_id, status, image });
+    res.status(200).json({ message: "Product updated successfully", product });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating product", error: error.message });
   }
 };
 
@@ -76,11 +72,15 @@ exports.deleteProduct = async (req, res) => {
     const { id } = req.params;
 
     const product = await Product.findByPk(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
     await product.destroy();
-    res.status(200).json({ message: "Product deleted" });
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting product", error: error.message });
   }
 };
