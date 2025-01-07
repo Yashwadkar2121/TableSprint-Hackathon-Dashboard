@@ -74,3 +74,33 @@ exports.deleteCategory = async (req, res) => {
       .json({ message: "Error deleting category", error: error.message });
   }
 };
+
+// Fetch category by ID
+exports.getCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract category ID from request parameters
+
+    // Fetch category by ID
+    const category = await Category.findByPk(id);
+
+    // Check if the category exists
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    // Send the category data
+    res.status(200).json({
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    console.error("Error fetching category by ID:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

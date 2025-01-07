@@ -10,7 +10,7 @@ import Sidebar from "../components/Sidebar";
 import Dashboard from "./Dashboard";
 import Category from "./Category/Category";
 import AddCategory from "./Category/AddCategory";
-import EditCategory from "./Category/Category";
+import EditCategory from "./Category/EditCategory";
 import SubCategory from "./Sub-Category/SubCategory";
 import AddSubCategory from "./Sub-Category/AddSubCategory";
 import EditSubCategory from "./Sub-Category/EditSubCategory";
@@ -48,7 +48,7 @@ function AppContent() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/category" element={<Category />} />
               <Route path="/add_category" element={<AddCategory />} />
-              <Route path="/editcategory" element={<EditCategory />} />
+              <Route path="/editcategory/:id" element={<EditCategory />} />
               <Route path="/subcategory" element={<SubCategory />} />
               <Route path="/addsubcategory" element={<AddSubCategory />} />
               <Route path="/editsubcategory" element={<EditSubCategory />} />

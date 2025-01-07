@@ -1,132 +1,113 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddCategory = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    sequence: "",
-  });
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [category_name, setCategoryName] = useState("");
+  const [image, setImage] = useState("");
+  const [status, setStatus] = useState("active");
+  const [sequence, setSequence] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file)); // Preview the image
-  };
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("sequence", formData.sequence);
-    data.append("image", image);
+    setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/category/create",
-        data
-      );
-      setSuccess(response.data.message);
-      setError("");
-      // Reset form
-      setFormData({ name: "", sequence: "" });
-      setImage(null);
-      setImagePreview(null);
+      const response = await axios.post("http://localhost:5000/categories", {
+        category_name,
+        image,
+        status,
+        sequence,
+      });
+
+      if (response.status === 201) {
+        // Redirect to categories list after successful category creation
+        navigate("/category");
+      }
     } catch (err) {
-      setError(
-        err.response?.data?.error || "An error occurred. Please try again."
-      );
-      setSuccess("");
+      setError("Error creating category", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Add Category</h2>
+      <h2 className="text-2xl font-bold mb-4">Add New Category</h2>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
-
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="name"
-          >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="category_name" className="block text-lg font-medium">
             Category Name
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+            id="category_name"
+            value={category_name}
+            onChange={(e) => setCategoryName(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
             required
-            className="w-full px-3 py-2 border rounded-md"
           />
         </div>
 
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="sequence"
-          >
-            Category Sequence
+        <div>
+          <label htmlFor="image" className="block text-lg font-medium">
+            Image URL
           </label>
           <input
-            type="text"
-            id="sequence"
-            name="sequence"
-            value={formData.sequence}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="image"
-          >
-            Category Image
-          </label>
-          <input
-            type="file"
+            type="url"
             id="image"
-            name="image"
-            onChange={handleImageChange}
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
             required
-            className="w-full border rounded-md"
           />
-          {imagePreview && (
-            <div className="mt-2">
-              <img
-                src={imagePreview}
-                alt="Image Preview"
-                className="max-w-xs rounded-md"
-              />
-            </div>
-          )}
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-        >
-          Save
-        </button>
+        <div>
+          <label htmlFor="status" className="block text-lg font-medium">
+            Status
+          </label>
+          <select
+            id="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
+            required
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="sequence" className="block text-lg font-medium">
+            Sequence
+          </label>
+          <input
+            type="number"
+            id="sequence"
+            value={sequence}
+            onChange={(e) => setSequence(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white p-2 rounded mt-4 w-full"
+            disabled={loading}
+          >
+            {loading ? "Creating..." : "Create Category"}
+          </button>
+        </div>
       </form>
     </div>
   );
