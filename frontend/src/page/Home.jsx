@@ -48,13 +48,16 @@ function AppContent() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/category" element={<Category />} />
               <Route path="/add_category" element={<AddCategory />} />
-              <Route path="/editcategory/:id" element={<EditCategory />} />
+              <Route path="/edit_category/:id" element={<EditCategory />} />
               <Route path="/subcategory" element={<SubCategory />} />
-              <Route path="/addsubcategory" element={<AddSubCategory />} />
-              <Route path="/editsubcategory" element={<EditSubCategory />} />
+              <Route path="/add_subcategory" element={<AddSubCategory />} />
+              <Route
+                path="/edit_subcategory/:id"
+                element={<EditSubCategory />}
+              />
               <Route path="/products" element={<Product />} />
-              <Route path="/addproduct" element={<AddProduct />} />
-              <Route path="/editproduct" element={<EditProduct />} />
+              <Route path="/add_product" element={<AddProduct />} />
+              <Route path="/edit_product/:id" element={<EditProduct />} />
             </Routes>
           </div>
         </div>

@@ -6,7 +6,7 @@ const Category = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  // useNavigate hook to handle redirects
+  
 
   // Fetch categories from the API
   const fetchCategories = async () => {
@@ -20,6 +20,7 @@ const Category = () => {
     }
   };
 
+  
   // Handle category deletion
   const handleDelete = async (id) => {
     try {
@@ -77,7 +78,7 @@ const Category = () => {
               <td className="border-b px-4 py-2">{category.status}</td>
               <td className="border-b px-4 py-2 flex space-x-2">
                 {/* Update Button */}
-                <Link to={`/editcategory/${category.id}`}>
+                <Link to={`/edit_category/${category.id}`}>
                   <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded">
                     Update
                   </button>

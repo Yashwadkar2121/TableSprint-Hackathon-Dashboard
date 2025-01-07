@@ -72,3 +72,38 @@ exports.deleteSubcategory = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.getSubcategoryById = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract subcategory ID from request parameters
+
+    // Fetch subcategory by ID along with associated category
+    const subcategory = await Subcategory.findOne({
+      where: { id },
+      include: {
+        model: Category,
+        as: "Category", // Adjust the alias if needed
+        attributes: ["category_name"], // Choose the category data you want to include
+      },
+    });
+
+    // Check if the subcategory exists
+    if (!subcategory) {
+      return res.status(404).json({
+        success: false,
+        message: "Subcategory not found",
+      });
+    }
+
+    // Send the subcategory data
+    res.status(200).json({
+      success: true,
+      data: subcategory,
+    });
+  } catch (error) {
+    console.error("Error fetching subcategory by ID:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

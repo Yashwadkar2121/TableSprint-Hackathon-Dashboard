@@ -1,171 +1,150 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddSubCategory = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    categoryName: "",
-    sequence: "",
-  });
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [subcategoryName, setSubcategoryName] = useState("");
+  const [categoryId, setCategoryId] = useState(""); // Track selected category
+  const [image, setImage] = useState("");
+  const [status, setStatus] = useState("");
+  const [sequence, setSequence] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]); // State to hold categories
+  const navigate = useNavigate();
 
+  // Fetch available categories on component mount
   useEffect(() => {
-    // Fetch categories for the dropdown
-    axios
-      .get("http://localhost:5000/category")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/categories");
+        setCategories(response.data.data); // Assuming the API returns an array of categories
+        console.log(response.data);
+      } catch (err) {
+        setError("Error fetching categories.", err);
+      }
+    };
+
+    fetchCategories();
   }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file)); // Preview the image
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("categoryName", formData.categoryName);
-    data.append("sequence", formData.sequence);
-    data.append("image", image);
+
+    const newSubcategory = {
+      subcategory_name: subcategoryName,
+      category_id: categoryId,
+      image: image,
+      status: status,
+      sequence: sequence,
+    };
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/subcategory/create",
-        data
-      );
-      setSuccess(response.data.message);
-      setError("");
-      // Reset form
-      setFormData({ name: "", categoryName: "", sequence: "" });
-      setImage(null);
-      setImagePreview(null);
+      await axios.post("http://localhost:5000/subcategories", newSubcategory);
+      // alert("Subcategory added successfully.");
+      navigate("/subcategory");
     } catch (err) {
-      setError(
-        err.response?.data?.error || "An error occurred. Please try again."
-      );
-      setSuccess("");
+      setError("Error adding subcategory.", err);
     }
   };
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Add Sub-Category</h2>
-
+      <h2 className="text-2xl font-bold mb-4">Add Subcategory</h2>
       {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
-
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="mb-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
           <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="name"
+            htmlFor="subcategory_name"
+            className="block text-sm font-medium"
           >
-            Sub-Category Name
+            Subcategory Name
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+            id="subcategory_name"
+            value={subcategoryName}
+            onChange={(e) => setSubcategoryName(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
 
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="categoryName"
-          >
-            Category Name
+        <div>
+          <label htmlFor="category_id" className="block text-sm font-medium">
+            Category
           </label>
           <select
-            id="categoryName"
-            name="categoryName"
-            value={formData.categoryName}
-            onChange={handleChange}
+            id="category_id"
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           >
-            <option value="">Select a Category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.name}>
-                {category.name}
+            <option value="" disabled>
+              Select a category
+            </option>
+            {categories.length === 0 ? (
+              <option value="" disabled>
+                No categories available
               </option>
-            ))}
+            ) : (
+              categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.category_name}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="sequence"
-          >
-            Sequence
+        <div>
+          <label htmlFor="image" className="block text-sm font-medium">
+            Image URL
           </label>
           <input
             type="text"
-            id="sequence"
-            name="sequence"
-            value={formData.sequence}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
+            id="image"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
-
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="image"
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium">
+            Status
+          </label>
+          <select
+            id="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            required
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           >
-            Sub-Category Image
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="sequence" className="block text-sm font-medium">
+            Sequence
           </label>
           <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageChange}
+            type="number"
+            id="sequence"
+            value={sequence}
+            onChange={(e) => setSequence(e.target.value)}
             required
-            className="w-full border rounded-md"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
-          {imagePreview && (
-            <div className="mt-2">
-              <img
-                src={imagePreview}
-                alt="Image Preview"
-                className="max-w-xs rounded-md"
-              />
-            </div>
-          )}
         </div>
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-        >
-          Save
-        </button>
+        <div>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Add Subcategory
+          </button>
+        </div>
       </form>
     </div>
   );

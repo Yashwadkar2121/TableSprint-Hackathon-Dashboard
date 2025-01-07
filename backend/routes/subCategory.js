@@ -14,4 +14,7 @@ router.put("/:id", subcategoryController.updateSubcategory);
 // Delete Subcategory
 router.delete("/:id", subcategoryController.deleteSubcategory);
 
+//find by id
+router.get("/:id", subcategoryController.getSubcategoryById);
+
 module.exports = router;
