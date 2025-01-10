@@ -84,3 +84,30 @@ exports.deleteProduct = async (req, res) => {
       .json({ message: "Error deleting product", error: error.message });
   }
 };
+// Get a Product by ID
+exports.getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find product by primary key
+    const product = await Product.findByPk(id, {
+      include: [
+        {
+          model: Subcategory,
+          attributes: ["subcategory_name", "category_id"],
+        },
+      ],
+    });
+
+    // Check if the product exists
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({ message: "Product fetched successfully", product });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching product", error: error.message });
+  }
+};

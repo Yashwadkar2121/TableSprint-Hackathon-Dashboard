@@ -1,199 +1,165 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const AddProducts = () => {
+const AddProduct = ({}) => {
   const [formData, setFormData] = useState({
-    name: "",
-    categoryName: "",
-    subCategoryName: "",
+    subcategory_id: "",
+    product_name: "",
+    status: "active",
+    image: "",
   });
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
+  const [error, setError] = useState(null);
+  const [subcategories, setSubcategories] = useState([]); // State to hold subcategories
+  const navigate = useNavigate();
+
+  // Fetch available subcategories on component mount
   useEffect(() => {
-    // Fetch all categories
-    axios
-      .get("http://localhost:5000/category")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
+    const fetchSubcategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/subcategories");
+        setSubcategories(response.data); // Assuming the API returns an array of subcategories
+      } catch (err) {
+        setError("Error fetching subcategories.", err);
+      }
+    };
+
+    fetchSubcategories();
   }, []);
-
-  useEffect(() => {
-    // Fetch sub-categories when category is selected
-    if (formData.categoryName) {
-      axios
-        .get(
-          `http://localhost:5000/subcategory?category=${formData.categoryName}`
-        )
-        .then((response) => {
-          setSubCategories(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching sub-categories:", error);
-        });
-    } else {
-      setSubCategories([]);
-    }
-  }, [formData.categoryName]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file)); // Preview the image
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("categoryName", formData.categoryName);
-    data.append("subCategoryName", formData.subCategoryName);
-    data.append("image", image);
-
     try {
       const response = await axios.post(
-        "http://localhost:5000/products/create",
-        data
+        "http://localhost:5000/products",
+        formData
       );
-      setSuccess(response.data.message);
-      setError("");
-      // Reset form
-      setFormData({ name: "", categoryName: "", subCategoryName: "" });
-      setImage(null);
-      setImagePreview(null);
+      response.data.data;
+      setFormData({
+        subcategory_id: "",
+        product_name: "",
+        status: "active",
+        image: "",
+      });
+      navigate("/products");
     } catch (err) {
-      setError(
-        err.response?.data?.error || "An error occurred. Please try again."
-      );
-      setSuccess("");
+      setError(err.message);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Add Product</h2>
-
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
-
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="mb-4">
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Product</h2>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Subcategory Dropdown */}
+        <div>
           <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="name"
+            htmlFor="subcategory_id"
+            className="block text-sm font-medium text-gray-700"
           >
-            Product Name
+            Subcategory:
+          </label>
+          <select
+            id="subcategory_id"
+            name="subcategory_id"
+            value={formData.subcategory_id}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="" disabled>
+              Select a subcategory
+            </option>
+            {subcategories.length === 0 ? (
+              <option value="" disabled>
+                No subcategories available
+              </option>
+            ) : (
+              subcategories.map((subcategory) => (
+                <option key={subcategory.id} value={subcategory.id}>
+                  {subcategory.subcategory_name}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
+
+        {/* Product Name */}
+        <div>
+          <label
+            htmlFor="product_name"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Product Name:
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="product_name"
+            name="product_name"
+            value={formData.product_name}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        <div className="mb-4">
+        {/* Status */}
+        <div>
           <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="categoryName"
+            htmlFor="status"
+            className="block text-sm font-medium text-gray-700"
           >
-            Category Name
+            Status:
           </label>
           <select
-            id="categoryName"
-            name="categoryName"
-            value={formData.categoryName}
+            id="status"
+            name="status"
+            value={formData.status}
             onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">Select a Category</option>
-            {categories.map((category) => (
-              <option key={category.name} value={category.name}>
-                {category.name}
-              </option>
-            ))}
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
 
-        <div className="mb-4">
+        {/* Image URL */}
+        <div>
           <label
-            className="block text-gray-700 font-semibold mb-2"
-            htmlFor="subCategoryName"
-          >
-            Sub-Category Name
-          </label>
-          <select
-            id="subCategoryName"
-            name="subCategoryName"
-            value={formData.subCategoryName}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          >
-            <option value="">Select a Sub-Category</option>
-            {subCategories.map((subCategory) => (
-              <option key={subCategory.name} value={subCategory.name}>
-                {subCategory.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 font-semibold mb-2"
             htmlFor="image"
+            className="block text-sm font-medium text-gray-700"
           >
-            Product Image
+            Image URL:
           </label>
           <input
-            type="file"
+            type="text"
             id="image"
             name="image"
-            onChange={handleImageChange}
-            required
-            className="w-full border rounded-md"
+            value={formData.image}
+            onChange={handleChange}
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {imagePreview && (
-            <div className="mt-2">
-              <img
-                src={imagePreview}
-                alt="Image Preview"
-                className="max-w-xs rounded-md"
-              />
-            </div>
-          )}
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-        >
-          Save
-        </button>
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Add Product
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddProducts;
+export default AddProduct;
