@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const AddProduct = ({}) => {
+const AddProduct = () => {
   const [formData, setFormData] = useState({
     subcategory_id: "",
     product_name: "",
