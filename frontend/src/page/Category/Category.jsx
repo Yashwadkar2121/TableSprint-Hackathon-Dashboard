@@ -6,7 +6,6 @@ const Category = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
 
   // Fetch categories from the API
   const fetchCategories = async () => {
@@ -20,7 +19,6 @@ const Category = () => {
     }
   };
 
-  
   // Handle category deletion
   const handleDelete = async (id) => {
     try {
@@ -68,8 +66,9 @@ const Category = () => {
             <tr key={category.id}>
               <td className="border-b px-4 py-2">{category.category_name}</td>
               <td className="border-b px-4 py-2">
+                {/* Correct image URL */}
                 <img
-                  src={category.image}
+                  src={`http://localhost:5000/uploads/${category.image}`}
                   alt={category.category_name}
                   className="w-8 h-8"
                 />

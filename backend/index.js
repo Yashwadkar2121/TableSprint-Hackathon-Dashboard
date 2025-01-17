@@ -3,8 +3,8 @@ const bodyParser = require("body-parser");
 const { sequelize } = require("./models");
 const userRoutes = require("./routes/user");
 const productRoutes = require("./routes/product");
-const subcategoryRoutes = require("./routes/subCategory")
-const categoryRoutes = require("./routes/category")
+const subcategoryRoutes = require("./routes/subCategory");
+const categoryRoutes = require("./routes/category");
 const cors = require("cors");
 
 const app = express();
@@ -19,6 +19,7 @@ app.use(
 );
 // Middleware to parse JSON bodies
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 // Routes
 app.use("/auth", userRoutes);

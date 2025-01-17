@@ -38,20 +38,23 @@ const EditCategory = () => {
     setLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append("category_name", category_name);
+      formData.append("image", image); // Ensure this is a file object
+      formData.append("status", status);
+      formData.append("sequence", sequence);
+
       const response = await axios.put(
         `http://localhost:5000/categories/${id}`,
+        formData,
         {
-          category_name,
-          image,
-          status,
-          sequence,
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
       if (response.status === 200) {
         navigate("/category");
       }
-      
     } catch (err) {
       setError("Error updating category", err);
     } finally {
@@ -84,12 +87,10 @@ const EditCategory = () => {
             Image URL
           </label>
           <input
-            type="url"
+            type="file"
             id="image"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            onChange={(e) => setImage(e.target.files[0])} // Handle file upload
             className="mt-1 p-2 border border-gray-300 rounded w-full"
-            required
           />
         </div>
 

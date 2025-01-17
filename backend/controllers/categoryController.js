@@ -1,15 +1,21 @@
 const { Category, Subcategory, Product } = require("../models");
+const path = require("path");
 
 // Create a new category
 exports.createCategory = async (req, res) => {
   try {
-    const { category_name, image, status, sequence } = req.body;
+    const { category_name, status, sequence } = req.body;
+
+    // Get uploaded file path
+    const imagePath = req.file ? req.file.path.replace("uploads\\", "") : null; // Remove platform-specific slashes for cross-platform compatibility
+
     const newCategory = await Category.create({
       category_name,
-      image,
+      image: imagePath, // Save the relative file path in the database
       status,
       sequence,
     });
+
     res
       .status(201)
       .json({ message: "Category created successfully", data: newCategory });
@@ -37,19 +43,36 @@ exports.getCategories = async (req, res) => {
 };
 
 // Update a category
+
 exports.updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { category_name, image, status, sequence } = req.body;
+    const { category_name, status, sequence } = req.body;
     const category = await Category.findByPk(id);
 
-    if (!category)
+    if (!category) {
       return res.status(404).json({ message: "Category not found" });
+    }
 
-    await category.update({ category_name, image, status, sequence });
-    res
-      .status(200)
-      .json({ message: "Category updated successfully", data: category });
+    // Check for image update
+    let imagePath = category.image; // Default to the old image
+    if (req.file) {
+      imagePath = req.file.path.replace("uploads\\", ""); // Handle file upload and save new image path
+    }
+
+    // Update the category with the new data
+    await category.update({
+      category_name,
+      image: imagePath, // Update image only if a new file is uploaded
+      status,
+      sequence,
+    });
+
+    res.status(200).json({
+      message: "Category updated successfully",
+      data: category,
+      imagePath,
+    });
   } catch (error) {
     res
       .status(500)
@@ -103,4 +126,10 @@ exports.getCategoryById = async (req, res) => {
       message: "Internal server error",
     });
   }
+};
+
+// Static file serving for image uploads
+exports.serveImages = (req, res) => {
+  const filePath = path.join(__dirname, "../uploads", req.params.filename);
+  res.sendFile(filePath);
 };

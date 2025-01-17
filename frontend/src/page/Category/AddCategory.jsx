@@ -1,35 +1,42 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AddCategory = () => {
   const [category_name, setCategoryName] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
   const [status, setStatus] = useState("active");
   const [sequence, setSequence] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    const formData = new FormData();
+    formData.append("category_name", category_name);
+    formData.append("image", image);
+    formData.append("status", status);
+    formData.append("sequence", sequence);
+
     try {
-      const response = await axios.post("http://localhost:5000/categories", {
-        category_name,
-        image,
-        status,
-        sequence,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/categories",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.status === 201) {
-        // Redirect to categories list after successful category creation
         navigate("/category");
       }
     } catch (err) {
-      setError("Error creating category", err);
+      setError("Error creating category");
     } finally {
       setLoading(false);
     }
@@ -57,14 +64,14 @@ const AddCategory = () => {
 
         <div>
           <label htmlFor="image" className="block text-lg font-medium">
-            Image URL
+            Image File
           </label>
           <input
-            type="url"
+            type="file"
             id="image"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            onChange={(e) => setImage(e.target.files[0])}
             className="mt-1 p-2 border border-gray-300 rounded w-full"
+            accept="image/*"
             required
           />
         </div>
