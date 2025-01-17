@@ -36,7 +36,7 @@ const AddCategory = () => {
         navigate("/category");
       }
     } catch (err) {
-      setError("Error creating category",err);
+      setError("Error creating category", err);
     } finally {
       setLoading(false);
     }

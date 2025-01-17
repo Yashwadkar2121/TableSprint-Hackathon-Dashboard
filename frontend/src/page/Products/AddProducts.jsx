@@ -3,15 +3,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
-  const [formData, setFormData] = useState({
-    subcategory_id: "",
-    product_name: "",
-    status: "active",
-    image: "",
-  });
-
+  const [subcategoriesId, setSubcategoriesId] = useState("");
+  const [productName, setProductName] = useState("");
+  const [image, setImage] = useState("");
+  const [status, setStatus] = useState("active");
   const [error, setError] = useState(null);
-  const [subcategories, setSubcategories] = useState([]); // State to hold subcategories
+  const [subcategories, setSubCategories] = useState([]);
   const navigate = useNavigate();
 
   // Fetch available subcategories on component mount
@@ -19,7 +16,7 @@ const AddProduct = () => {
     const fetchSubcategories = async () => {
       try {
         const response = await axios.get("http://localhost:5000/subcategories");
-        setSubcategories(response.data); // Assuming the API returns an array of subcategories
+        setSubCategories(response.data); // Assuming the API returns an array of subcategories
       } catch (err) {
         setError("Error fetching subcategories.", err);
       }
@@ -28,51 +25,45 @@ const AddProduct = () => {
     fetchSubcategories();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("product_name", productName);
+    formData.append("subcategory_id", subcategoriesId);
+    formData.append("image", image); // Append the file
+    formData.append("status", status);
+
     try {
-      const response = await axios.post(
-        "http://localhost:5000/products",
-        formData
-      );
-      response.data.data;
-      setFormData({
-        subcategory_id: "",
-        product_name: "",
-        status: "active",
-        image: "",
+      await axios.post("http://localhost:5000/products", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/products");
     } catch (err) {
-      setError(err.message);
+      setError("Error adding product.", err);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add Product</h2>
+    <div className="container mx-auto p-6">
+      <h2 className="text-3xl font-semibold mb-6">Add Product</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Subcategory Dropdown */}
         <div>
           <label
             htmlFor="subcategory_id"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700 mb-2"
           >
-            Subcategory:
+            Select Subcategory
           </label>
           <select
             id="subcategory_id"
             name="subcategory_id"
-            value={formData.subcategory_id}
-            onChange={handleChange}
+            value={subcategoriesId}
+            onChange={(e) => setSubcategoriesId(e.target.value)}
             required
-            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="" disabled>
               Select a subcategory
@@ -95,18 +86,17 @@ const AddProduct = () => {
         <div>
           <label
             htmlFor="product_name"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700 mb-2"
           >
-            Product Name:
+            Product Name
           </label>
           <input
             type="text"
             id="product_name"
-            name="product_name"
-            value={formData.product_name}
-            onChange={handleChange}
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
             required
-            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
 
@@ -114,37 +104,34 @@ const AddProduct = () => {
         <div>
           <label
             htmlFor="status"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-lg font-medium text-gray-700 mb-2"
           >
-            Status:
+            Product Status
           </label>
           <select
             id="status"
             name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            required
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
         </div>
 
-        {/* Image URL */}
+        {/* Image Upload */}
         <div>
-          <label
-            htmlFor="image"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Image URL:
+          <label htmlFor="image" className="block text-sm font-medium">
+            Image URL
           </label>
           <input
-            type="text"
+            type="file"
             id="image"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            className="mt-1 block w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setImage(e.target.files[0])} // Store the selected file
+            required
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
 
@@ -152,7 +139,7 @@ const AddProduct = () => {
         <div>
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
           >
             Add Product
           </button>

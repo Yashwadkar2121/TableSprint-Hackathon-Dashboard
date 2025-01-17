@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import Dashboard from "./Dashboard";
+import Dashboard from "./DashBoard";
 import Category from "./Category/Category";
 import AddCategory from "./Category/AddCategory";
 import EditCategory from "./Category/EditCategory";

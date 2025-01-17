@@ -6,9 +6,8 @@ const EditProduct = () => {
   const { id } = useParams(); // Get the product ID from the URL
   const [productName, setProductName] = useState("");
   const [subcategoryId, setSubcategoryId] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null); // Change to handle file upload
   const [status, setStatus] = useState("");
-
   const [subcategories, setSubcategories] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -36,8 +35,8 @@ const EditProduct = () => {
         const product = response.data.product; // Adjust path if needed
         setProductName(product.product_name);
         setSubcategoryId(product.subcategory_id);
-        setImage(product.image);
         setStatus(product.status);
+        setImage(product.image); // Pre-fill with existing image URL (not for upload)
       } catch (err) {
         setError("Error fetching product details.", err);
       }
@@ -48,15 +47,22 @@ const EditProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const updatedProduct = {
-      product_name: productName,
-      subcategory_id: subcategoryId,
-      image: image,
-      status: status,
-    };
+    const updatedProduct = new FormData();
+    updatedProduct.append("product_name", productName);
+    updatedProduct.append("subcategory_id", subcategoryId);
+    updatedProduct.append("status", status);
+
+    // If a new image is uploaded, append it to the FormData
+    if (image) {
+      updatedProduct.append("image", image);
+    }
 
     try {
-      await axios.put(`http://localhost:5000/products/${id}`, updatedProduct);
+      await axios.put(`http://localhost:5000/products/${id}`, updatedProduct, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Important for file upload
+        },
+      });
       alert("Product updated successfully.");
       navigate("/products");
     } catch (err) {
@@ -64,15 +70,15 @@ const EditProduct = () => {
     }
   };
 
-  // if (!productName || !subcategoryId) {
-  //   return <div>Loading...</div>;
-  // }
-
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Edit Product</h2>
       {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        encType="multipart/form-data"
+      >
         <div>
           <label htmlFor="product_name" className="block text-sm font-medium">
             Product Name
@@ -106,15 +112,21 @@ const EditProduct = () => {
         </div>
         <div>
           <label htmlFor="image" className="block text-sm font-medium">
-            Image URL
+            Image
           </label>
           <input
-            type="text"
+            type="file"
             id="image"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            onChange={(e) => setImage(e.target.files[0])}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
+          {image && (
+            <div className="mt-2">
+              <p className="text-sm text-gray-600">
+                Selected image: {image.name}
+              </p>
+            </div>
+          )}
         </div>
         <div>
           <label htmlFor="status" className="block text-sm font-medium">

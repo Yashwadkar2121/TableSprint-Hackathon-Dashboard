@@ -4,9 +4,9 @@ const categoryController = require("../controllers/categoryController");
 const upload = require("../middlewares/upload");
 
 router.post("/", upload.single("image"), categoryController.createCategory);
-router.get("/", categoryController.getCategories); // Get all categories
-router.put("/:id", upload.single("image"), categoryController.updateCategory); // Update category
-router.delete("/:id", categoryController.deleteCategory); // Delete category
+router.get("/", categoryController.getCategories); 
+router.put("/:id", upload.single("image"), categoryController.updateCategory); 
+router.delete("/:id", categoryController.deleteCategory); 
 router.get("/:id", categoryController.getCategoryById);
 
 module.exports = router;

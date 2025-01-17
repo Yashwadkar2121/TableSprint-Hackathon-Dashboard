@@ -14,7 +14,7 @@ const Product = () => {
       setProducts(response.data.products); // Assuming the API returns an array of products
       setLoading(false);
     } catch (err) {
-      setError("Error fetching products.");
+      setError("Error fetching products.", err);
       setLoading(false);
     }
   };
@@ -26,7 +26,7 @@ const Product = () => {
       setProducts(products.filter((product) => product.id !== id));
       alert("Product deleted successfully.");
     } catch (err) {
-      alert("Failed to delete product.");
+      alert("Failed to delete product.", err);
     }
   };
 
@@ -40,15 +40,16 @@ const Product = () => {
     return <p className="text-center text-red-500 mt-4">Error: {error}</p>;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-800">Product Dashboard</h1>
+        <h2 className="text-2xl font-bold">Product Dashboard</h2>
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           <Link to="/add_product">Add Product</Link>
         </button>
       </div>
+
       <div className="overflow-x-auto shadow-md rounded-lg">
-        <table className="min-w-full bg-white rounded-lg border border-gray-200">
+        <table className="min-w-full table-auto border-collapse border border-gray-200">
           <thead className="bg-gray-200">
             <tr>
               <th className="px-4 py-2 text-left text-gray-700 font-semibold">
@@ -88,17 +89,17 @@ const Product = () => {
                 <td className="px-4 py-2">
                   {product.image ? (
                     <img
-                      src={product.image}
-                      alt={product.product_name}
-                      className="w-12 h-12 object-cover rounded"
+                      src={`http://localhost:5000/uploads/${product.image}`}
+                      alt={product.category_name}
+                      className="w-8 h-8"
                     />
                   ) : (
-                    <span className="text-gray-500">No Image</span>
+                    "No Image"
                   )}
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 flex space-x-2">
                   <Link to={`/edit_product/${product.id}`}>
-                    <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded mr-2">
+                    <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded">
                       Update
                     </button>
                   </Link>

@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: "http://localhost:5173", // Allow requests from any origin (change to specific origins as needed)
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 // Middleware to parse JSON bodies

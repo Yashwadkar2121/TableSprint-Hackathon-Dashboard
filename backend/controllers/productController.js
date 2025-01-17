@@ -1,9 +1,18 @@
-const { Product, Subcategory } = require("../models");
+const path = require("path");
+const { Product, Subcategory } = require("../models"); // Assuming the models are imported
 
-// Create a Product
 exports.createProduct = async (req, res) => {
   try {
-    const { subcategory_id, product_name, status, image } = req.body;
+    const { subcategory_id, product_name, status } = req.body;
+
+    // Validate required fields
+    if (!subcategory_id || !product_name || !status) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Get uploaded file path
+    // Get uploaded file path
+    const imagePath = req.file ? req.file.path.replace("uploads\\", "") : null; // Safer cross-platform file path handling
 
     // Check if Subcategory exists
     const subcategory = await Subcategory.findByPk(subcategory_id);
@@ -16,11 +25,14 @@ exports.createProduct = async (req, res) => {
       subcategory_id,
       product_name,
       status,
-      image,
+      image: imagePath,
     });
 
-    res.status(201).json({ message: "Product created successfully", product });
+    res
+      .status(201)
+      .json({ message: "Product created successfully", data: product });
   } catch (error) {
+    console.error(error); // Helpful for debugging
     res
       .status(500)
       .json({ message: "Error creating product", error: error.message });
@@ -50,16 +62,32 @@ exports.getAllProducts = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { product_name, subcategory_id, status, image } = req.body;
+    const { product_name, subcategory_id, status } = req.body;
 
+    // Check if product exists
     const product = await Product.findByPk(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    await product.update({ product_name, subcategory_id, status, image });
+    // Handle file upload: If a new file is uploaded, update the image path
+    let imagePath = product.image; // Default to existing image
+    if (req.file) {
+      // Get the new image path from the uploaded file
+      imagePath = req.file.path.replace("uploads\\", ""); // Safer cross-platform file path handling
+    }
+
+    // Update product details
+    await product.update({
+      product_name,
+      subcategory_id,
+      status,
+      image: imagePath,
+    });
+
     res.status(200).json({ message: "Product updated successfully", product });
   } catch (error) {
+    console.error(error); // Helpful for debugging
     res
       .status(500)
       .json({ message: "Error updating product", error: error.message });
@@ -110,4 +138,8 @@ exports.getProductById = async (req, res) => {
       .status(500)
       .json({ message: "Error fetching product", error: error.message });
   }
+};
+exports.serveImages = (req, res) => {
+  const filePath = path.join(__dirname, "../uploads", req.params.filename);
+  res.sendFile(filePath);
 };

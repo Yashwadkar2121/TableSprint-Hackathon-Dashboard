@@ -21,7 +21,7 @@ const EditSubCategory = () => {
         const response = await axios.get("http://localhost:5000/categories");
         setCategories(response.data.data);
       } catch (err) {
-        setError("Error fetching categories.");
+        setError("Error fetching categories.", err);
       }
     };
     fetchCategories();
@@ -41,7 +41,7 @@ const EditSubCategory = () => {
         setStatus(subcategory.status);
         setSequence(subcategory.sequence);
       } catch (err) {
-        setError("Error fetching subcategory details.");
+        setError("Error fetching subcategory details.", err);
       }
     };
     fetchSubcategory();
@@ -73,7 +73,7 @@ const EditSubCategory = () => {
         navigate("/subcategory");
       }
     } catch (err) {
-      setError("Error updating subcategory.");
+      setError("Error updating subcategory.", err);
     } finally {
       setLoading(false);
     }
