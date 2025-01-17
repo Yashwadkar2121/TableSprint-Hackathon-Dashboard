@@ -30,17 +30,17 @@ const AddSubCategory = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newSubcategory = {
-      subcategory_name: subcategoryName,
-      category_id: categoryId,
-      image: image,
-      status: status,
-      sequence: sequence,
-    };
+    const formData = new FormData();
+    formData.append("subcategory_name", subcategoryName);
+    formData.append("category_id", categoryId);
+    formData.append("image", image); // Append the file
+    formData.append("status", status);
+    formData.append("sequence", sequence);
 
     try {
-      await axios.post("http://localhost:5000/subcategories", newSubcategory);
-      // alert("Subcategory added successfully.");
+      await axios.post("http://localhost:5000/subcategories", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       navigate("/subcategory");
     } catch (err) {
       setError("Error adding subcategory.", err);
@@ -102,10 +102,10 @@ const AddSubCategory = () => {
             Image URL
           </label>
           <input
-            type="text"
+            type="file"
             id="image"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
+            onChange={(e) => setImage(e.target.files[0])} // Store the selected file
+            required
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
         </div>

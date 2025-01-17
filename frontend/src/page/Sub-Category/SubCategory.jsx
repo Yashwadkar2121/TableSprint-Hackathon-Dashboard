@@ -75,9 +75,9 @@ const SubCategory = () => {
               <td className="border-b px-4 py-2">
                 {subcategory.image ? (
                   <img
-                    src={subcategory.image}
-                    alt={subcategory.subcategory_name}
-                    className="w-10 h-10 object-cover"
+                    src={`http://localhost:5000/uploads/${subcategory.image}`}
+                    alt={subcategory.category_name}
+                    className="w-8 h-8"
                   />
                 ) : (
                   "No Image"
