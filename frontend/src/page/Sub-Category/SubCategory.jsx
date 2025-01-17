@@ -14,7 +14,7 @@ const SubCategory = () => {
       setSubcategories(response.data); // Assuming the API returns an array of subcategories
       setLoading(false);
     } catch (err) {
-      setError("Error fetching subcategories");
+      setError("Error fetching subcategories", err);
       setLoading(false);
     }
   };
@@ -28,11 +28,9 @@ const SubCategory = () => {
       );
       alert("Subcategory deleted successfully.");
     } catch (err) {
-      alert("Failed to delete subcategory.");
+      alert("Failed to delete subcategory.", err);
     }
   };
-
-
 
   useEffect(() => {
     fetchSubcategories();

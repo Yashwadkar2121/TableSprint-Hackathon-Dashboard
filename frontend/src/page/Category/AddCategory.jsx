@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +36,7 @@ const AddCategory = () => {
         navigate("/category");
       }
     } catch (err) {
-      setError("Error creating category");
+      setError("Error creating category",err);
     } finally {
       setLoading(false);
     }
