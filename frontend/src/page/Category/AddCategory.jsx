@@ -11,6 +11,10 @@ const AddCategory = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Use environment variable or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -23,7 +27,7 @@ const AddCategory = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/categories",
+        `${API_BASE_URL}/categories`,
         formData,
         {
           headers: {

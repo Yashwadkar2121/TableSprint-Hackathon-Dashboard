@@ -7,10 +7,14 @@ const SubCategory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Use environment variable for API base URL or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch subcategories from the API
   const fetchSubcategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/subcategories");
+      const response = await axios.get(`${API_BASE_URL}/subcategories`);
       setSubcategories(response.data); // Assuming the API returns an array of subcategories
       setLoading(false);
     } catch (err) {
@@ -22,7 +26,7 @@ const SubCategory = () => {
   // Handle delete subcategory
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/subcategories/${id}`);
+      await axios.delete(`${API_BASE_URL}/subcategories/${id}`);
       setSubcategories(
         subcategories.filter((subcategory) => subcategory.id !== id)
       );
@@ -75,7 +79,7 @@ const SubCategory = () => {
               <td className="border-b px-4 py-2">
                 {subcategory.image ? (
                   <img
-                    src={`http://localhost:5000/uploads/${subcategory.image}`}
+                    src={`${API_BASE_URL}/uploads/${subcategory.image}`}
                     alt={subcategory.category_name}
                     className="w-8 h-8"
                   />

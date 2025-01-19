@@ -12,11 +12,15 @@ const EditProduct = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Use environment variable for API base URL or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch available subcategories for the select input
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/subcategories");
+        const response = await axios.get(`${API_BASE_URL}/subcategories`);
         setSubcategories(response.data);
       } catch (err) {
         setError("Error fetching subcategories.", err);
@@ -29,9 +33,7 @@ const EditProduct = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/products/${id}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/products/${id}`);
         const product = response.data.product; // Adjust path if needed
         setProductName(product.product_name);
         setSubcategoryId(product.subcategory_id);
@@ -58,7 +60,7 @@ const EditProduct = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/products/${id}`, updatedProduct, {
+      await axios.put(`${API_BASE_URL}/products/${id}`, updatedProduct, {
         headers: {
           "Content-Type": "multipart/form-data", // Important for file upload
         },

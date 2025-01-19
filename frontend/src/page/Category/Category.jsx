@@ -7,10 +7,14 @@ const Category = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Use environment variable or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch categories from the API
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/categories");
+      const response = await axios.get(`${API_BASE_URL}/categories`);
       setCategories(response.data.data);
       setLoading(false);
     } catch (err) {
@@ -22,8 +26,7 @@ const Category = () => {
   // Handle category deletion
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/categories/${id}`);
-      // Refresh the category list after deletion
+      await axios.delete(`${API_BASE_URL}/categories/${id}`);
       fetchCategories();
     } catch (err) {
       setError("Error deleting category", err);
@@ -66,9 +69,8 @@ const Category = () => {
             <tr key={category.id}>
               <td className="border-b px-4 py-2">{category.category_name}</td>
               <td className="border-b px-4 py-2">
-                {/* Correct image URL */}
                 <img
-                  src={`http://localhost:5000/uploads/${category.image}`}
+                  src={`${API_BASE_URL}/uploads/${category.image}`}
                   alt={category.category_name}
                   className="w-8 h-8"
                 />
@@ -76,13 +78,11 @@ const Category = () => {
               <td className="border-b px-4 py-2">{category.sequence}</td>
               <td className="border-b px-4 py-2">{category.status}</td>
               <td className="border-b px-4 py-2 flex space-x-2">
-                {/* Update Button */}
                 <Link to={`/edit_category/${category.id}`}>
                   <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded">
                     Update
                   </button>
                 </Link>
-                {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(category.id)}
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"

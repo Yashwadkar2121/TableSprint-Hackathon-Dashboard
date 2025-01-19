@@ -12,12 +12,14 @@ const EditCategory = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get the category ID from URL parameters
 
+  // Use environment variable or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch the category details by ID
   const fetchCategory = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/categories/${id}`
-      );
+      const response = await axios.get(`${API_BASE_URL}/categories/${id}`);
       const category = response.data.data;
       setCategoryName(category.category_name);
       setImage(category.image);
@@ -45,7 +47,7 @@ const EditCategory = () => {
       formData.append("sequence", sequence);
 
       const response = await axios.put(
-        `http://localhost:5000/categories/${id}`,
+        `${API_BASE_URL}/categories/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -84,7 +86,7 @@ const EditCategory = () => {
 
         <div>
           <label htmlFor="image" className="block text-lg font-medium">
-            Image URL
+            Image File
           </label>
           <input
             type="file"

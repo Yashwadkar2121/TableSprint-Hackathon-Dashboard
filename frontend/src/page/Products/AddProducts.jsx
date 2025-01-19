@@ -11,11 +11,15 @@ const AddProduct = () => {
   const [subcategories, setSubCategories] = useState([]);
   const navigate = useNavigate();
 
+  // Use environment variable for API base URL or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch available subcategories on component mount
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/subcategories");
+        const response = await axios.get(`${API_BASE_URL}/subcategories`);
         setSubCategories(response.data); // Assuming the API returns an array of subcategories
       } catch (err) {
         setError("Error fetching subcategories.", err);
@@ -35,7 +39,7 @@ const AddProduct = () => {
     formData.append("status", status);
 
     try {
-      await axios.post("http://localhost:5000/products", formData, {
+      await axios.post(`${API_BASE_URL}/products`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/products");

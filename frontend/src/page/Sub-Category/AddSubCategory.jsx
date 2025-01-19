@@ -5,20 +5,22 @@ import { useNavigate } from "react-router-dom";
 const AddSubCategory = () => {
   const [subcategoryName, setSubcategoryName] = useState("");
   const [categoryId, setCategoryId] = useState(""); // Track selected category
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
   const [status, setStatus] = useState("");
   const [sequence, setSequence] = useState("");
   const [error, setError] = useState("");
   const [categories, setCategories] = useState([]); // State to hold categories
   const navigate = useNavigate();
 
+  // Use environment variable for API base URL or fallback to localhost
+  const API_BASE_URL = import.meta.env.Vite_BASE_URL || "http://localhost:5000";
+
   // Fetch available categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/categories");
+        const response = await axios.get(`${API_BASE_URL}/categories`);
         setCategories(response.data.data); // Assuming the API returns an array of categories
-        console.log(response.data);
       } catch (err) {
         setError("Error fetching categories.", err);
       }
@@ -38,7 +40,7 @@ const AddSubCategory = () => {
     formData.append("sequence", sequence);
 
     try {
-      await axios.post("http://localhost:5000/subcategories", formData, {
+      await axios.post(`${API_BASE_URL}/subcategories`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/subcategory");

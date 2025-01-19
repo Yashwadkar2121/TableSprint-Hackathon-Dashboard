@@ -7,11 +7,15 @@ function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Use environment variable or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
         email,
         password,
       });

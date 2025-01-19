@@ -7,10 +7,14 @@ const Product = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Use environment variable for API base URL or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch products from the API
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/products");
+      const response = await axios.get(`${API_BASE_URL}/products`);
       setProducts(response.data.products); // Assuming the API returns an array of products
       setLoading(false);
     } catch (err) {
@@ -22,7 +26,7 @@ const Product = () => {
   // Handle delete product
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/products/${id}`);
+      await axios.delete(`${API_BASE_URL}/products/${id}`);
       setProducts(products.filter((product) => product.id !== id));
       alert("Product deleted successfully.");
     } catch (err) {
@@ -89,8 +93,8 @@ const Product = () => {
                 <td className="px-4 py-2">
                   {product.image ? (
                     <img
-                      src={`http://localhost:5000/uploads/${product.image}`}
-                      alt={product.category_name}
+                      src={`${API_BASE_URL}/uploads/${product.image}`}
+                      alt={product.product_name}
                       className="w-8 h-8"
                     />
                   ) : (

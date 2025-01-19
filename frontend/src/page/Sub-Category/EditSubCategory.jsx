@@ -14,11 +14,15 @@ const EditSubCategory = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get the subcategory ID from URL parameters
 
+  // Use environment variable for API base URL or fallback to localhost
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   // Fetch available categories for the dropdown
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/categories");
+        const response = await axios.get(`${API_BASE_URL}/categories`);
         setCategories(response.data.data);
       } catch (err) {
         setError("Error fetching categories.", err);
@@ -31,9 +35,7 @@ const EditSubCategory = () => {
   useEffect(() => {
     const fetchSubcategory = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/subcategories/${id}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/subcategories/${id}`);
         const subcategory = response.data.data;
         setSubcategoryName(subcategory.subcategory_name);
         setCategoryId(subcategory.category_id);
@@ -61,7 +63,7 @@ const EditSubCategory = () => {
       formData.append("sequence", sequence);
 
       const response = await axios.put(
-        `http://localhost:5000/subcategories/${id}`,
+        `${API_BASE_URL}/subcategories/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
